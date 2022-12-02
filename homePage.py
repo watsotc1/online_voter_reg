@@ -43,7 +43,7 @@ def Home(root, frame1, frame2):
 
 def new_home():
     root = Tk()
-    root.geometry('500x500')
+    root.geometry('600x600')
     frame1 = Frame(root)
     frame2 = Frame(root)
     Home(root, frame1, frame2)

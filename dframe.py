@@ -1,7 +1,6 @@
 import pandas as pd
 from pathlib import Path
 
-# path = Path("C:/Users/Desktop/Sem-5/CS301 CN/Project/Voting/database")
 path = Path("database")
 
 def count_reset():
@@ -22,6 +21,7 @@ def reset_voter_list():
     df = pd.DataFrame(columns=['voter_id','Name','Gender','County','State','UserID','Password','hasVoted'])
     df=df[['voter_id','Name','Gender','County','State','UserID','Password','hasVoted']]
     df.to_csv(path/'voterList.csv')
+
 
 def reset_cand_list():
     df = pd.DataFrame(columns=['Party','Name','Vote Count'])
