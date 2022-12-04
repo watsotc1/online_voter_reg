@@ -1,3 +1,4 @@
 ,voter_id,Name,Gender,County,State,UserID,Password,hasVoted
 0,10001,Taylor Watson,Female,Galveston,TX,taylorW,password,0
 1,10002,Billy Bob,Male,Fort Bend,TX,billy61,abcde,0
+2,10003,Laura Watson,Female,Harris,TX,lwatsn,abc123,0

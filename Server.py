@@ -1,8 +1,7 @@
+from utils import *
+from Security import *
 import socket
 import threading
-import dframe as df
-from threading import Thread
-from dframe import *
 
 lock = threading.Lock()
 
@@ -19,31 +18,30 @@ def client_thread(connection):
     totp = log[3]
     
     #Authenticate
-    if(df.verify(userID,password,otp,totp)):                                
-        if(df.isEligible(userID)):
-            print('Voter Logged in... ID:'+str(userID))
-            connection.send("Authenticate".encode())
+    if(verify(userID,password,otp,totp)):                                
+        if(isEligible(userID)):
+            print('Voter Logged in... ID:' + str(userID))
+            connection.send('Authenticate'.encode())
         else:
-            print('Vote Already Cast by ID:'+str(userID))
-            connection.send("VoteCasted".encode())
+            print('Vote Already Cast by ID:' + str(userID))
+            connection.send('VoteCasted'.encode())
     else:
         print('Invalid Voter')
-        connection.send("InvalidVoter".encode())
+        connection.send('InvalidVoter'.encode())
 
 
     #Get Vote
     data = connection.recv(1024)                                   
-    print("Vote Received from ID: "+str(userID)+"  Processing...")
+    print('Vote Received from ID: ' + str(userID) + '  Processing...')
     lock.acquire()
 
-    #update Database
-    if(df.vote_update(data.decode(),userID)):
-        print("Vote Casted Successfully by voter ID = "+str(userID))
-        connection.send("Successful".encode())
+    #Update Database
+    if(vote_update(data.decode(),userID)):
+        print('Vote Casted Successfully by voter ID = ' + str(userID))
+        connection.send('Successful'.encode())
     else:
-        print("Vote Update Failed by voter ID = "+str(userID))
-        connection.send("Vote Update Failed".encode())
-                                                                        #5
+        print('Vote Update Failed by voter ID = ' + str(userID))
+        connection.send('Vote Update Failed'.encode())
 
     lock.release()
     connection.close()
@@ -61,19 +59,19 @@ def voting_Server():
         serversocket.bind((host, port))
     except socket.error as e :
         print(str(e))
-    print("Waiting for the connection")
+    print('Waiting for the connection')
 
     serversocket.listen(10)
 
-    print( "Listening on " + str(host) + ":" + str(port))
+    print( 'Listening on ' + str(host) + ':' + str(port))
 
     while True :
         client, address = serversocket.accept()
 
         print('Connected to :', address)
 
-        client.send("Connection Established".encode())   ### 1
-        t = Thread(target = client_thread,args = (client,))
+        client.send('Connection Established'.encode())   ### 1
+        t = threading.Thread(target = client_thread,args = (client,))
         t.start()
         ThreadCount+=1
         # break
