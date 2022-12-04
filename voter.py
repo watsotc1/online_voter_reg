@@ -5,17 +5,25 @@ from VotingPage import votingPg
 from tkinter import *
 from tkinter import ttk
 from PIL import ImageTk,Image
+import random
+import string
 import pyotp
 import pyqrcode
 import png
 from pyqrcode import QRCode
 
 def generate_qr(keyword='base32secret3232'):
-    s = pyotp.TOTP(keyword).provisioning_uri(name='alice@google.com', issuer_name='Secure Voting System')
+    #Generate OTP
+    totp = pyotp.TOTP(keyword)
+    s = totp.provisioning_uri(name='alice@google.com', issuer_name='Secure Voting System')
 
+    #Make QR Code
+    save_path = 'img/' + ''.join(random.choices(string.ascii_lowercase, k=5)) + '.png'
     url = pyqrcode.create(s)
+    url.png(save_path, scale = 6)
 
-    url.png('img/otp.png', scale = 6)
+    #Return OTP
+    return totp.now(), save_path
 
 
 def establish_connection():
@@ -40,8 +48,8 @@ def failed_return(root,frame1,client_socket,message):
     Label(frame1, text=message, font=('Inter', 12, 'bold')).grid(row = 1, column = 1)
     client_socket.close()
 
-def log_server(root,frame1,client_socket,userID,password):
-    message = userID + " " + password
+def log_server(root,frame1,client_socket,userID,password,otp,totp):
+    message = userID + " " + password + " " + otp + " " + totp
     client_socket.send(message.encode())
 
     #Authenticatication message
@@ -90,15 +98,15 @@ def voterLogin(root,frame1):
     Entry(frame1, textvariable = password, show = '*').grid(row = 3,column = 2)
 
     Label(frame1, text="OTP:   ", anchor="e", justify=LEFT).grid(row = 4,column = 0)
-    Entry(frame1, textvariable = otp, show = '*').grid(row = 4,column = 2)
+    Entry(frame1, textvariable = otp).grid(row = 4,column = 2)
 
-    generate_qr('base32secret3232')    
+    totp, save_path = generate_qr(pyotp.random_base32())
 
     Label(frame1, text="\nPlease Scan With Google Authenticator", anchor="c", justify=CENTER).grid(row = 5,column = 2)
-    qr_code = ImageTk.PhotoImage((Image.open("img/otp.png").resize((250,250),Image.ANTIALIAS)))
+    qr_code = ImageTk.PhotoImage((Image.open(save_path).resize((250,250),Image.ANTIALIAS)))
     Label(frame1, image=qr_code).grid(row = 6,column = 2)
 
-    Button(frame1, text="Login", width=10, command = lambda: log_server(root, frame1, client_socket, userID.get(), password.get(), otp.get())).grid(row = 8, column = 2)
+    Button(frame1, text="Login", width=10, command = lambda: log_server(root, frame1, client_socket, userID.get(), password.get(), otp.get(), totp)).grid(row = 8, column = 2)
     Label(frame1, text="").grid(row = 7,column = 0)
 
     frame1.pack()

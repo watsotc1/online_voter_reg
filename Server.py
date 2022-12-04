@@ -13,15 +13,18 @@ def client_thread(connection):
 
     #Verify voter details
     log = (data.decode()).split(' ')
-    log[0] = log[0]
+    userID = log[0]
+    password = log[1]
+    otp = log[2]
+    totp = log[3]
     
     #Authenticate
-    if(df.verify(log[0],log[1])):                                
-        if(df.isEligible(log[0])):
-            print('Voter Logged in... ID:'+str(log[0]))
+    if(df.verify(userID,password,otp,totp)):                                
+        if(df.isEligible(userID)):
+            print('Voter Logged in... ID:'+str(userID))
             connection.send("Authenticate".encode())
         else:
-            print('Vote Already Cast by ID:'+str(log[0]))
+            print('Vote Already Cast by ID:'+str(userID))
             connection.send("VoteCasted".encode())
     else:
         print('Invalid Voter')
@@ -30,15 +33,15 @@ def client_thread(connection):
 
     #Get Vote
     data = connection.recv(1024)                                   
-    print("Vote Received from ID: "+str(log[0])+"  Processing...")
+    print("Vote Received from ID: "+str(userID)+"  Processing...")
     lock.acquire()
 
     #update Database
-    if(df.vote_update(data.decode(),log[0])):
-        print("Vote Casted Successfully by voter ID = "+str(log[0]))
+    if(df.vote_update(data.decode(),userID)):
+        print("Vote Casted Successfully by voter ID = "+str(userID))
         connection.send("Successful".encode())
     else:
-        print("Vote Update Failed by voter ID = "+str(log[0]))
+        print("Vote Update Failed by voter ID = "+str(userID))
         connection.send("Vote Update Failed".encode())
                                                                         #5
 

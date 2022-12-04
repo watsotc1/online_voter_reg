@@ -54,7 +54,7 @@ def Register(root,frame1):
     Entry(frame1, textvariable = userID).grid(row = 7, column = 2)
 
     Label(frame1, text="Password:", anchor="e", justify=LEFT).grid(row = 8,column = 0)
-    Entry(frame1, textvariable = password).grid(row = 8, column = 2)
+    Entry(frame1, textvariable = password, show = '*').grid(row = 8, column = 2)
 
     reg = Button(frame1, text="Register", command = lambda: reg_server(root, frame1, name.get(), gender.get(), county.get(), state.get(), userID.get(), password.get()), width=10)
     Label(frame1, text="").grid(row = 8,column = 0)

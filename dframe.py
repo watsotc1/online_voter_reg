@@ -29,12 +29,16 @@ def reset_cand_list():
     df.to_csv(path/'cand_list.csv')
 
 
-def verify(userID,password):
+def verify(userID,password,otp,totp):
     df=pd.read_csv(path/'voterList.csv')
     df=df[['voter_id','Name','Gender','County','State','UserID','Password','hasVoted']]
     for index, row in df.iterrows():
-        if df['UserID'].iloc[index]==userID and df['Password'].iloc[index]==password:
-            return True
+        if (df['UserID'].iloc[index] == userID) and (df['Password'].iloc[index] == password):
+            print("\nTOTP = ", totp)
+            print("\nOTP = ", otp)
+
+            if otp == totp:
+                return True
     return False
 
 

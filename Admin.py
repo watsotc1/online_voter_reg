@@ -78,11 +78,3 @@ def AdmLogin(root,frame1):
 
     frame1.pack()
     root.mainloop()
-
-
-# if __name__ == "__main__":
-#         root = Tk()
-#         root.geometry('500x500')
-#         frame1 = Frame(root)
-#         frame3 = Frame(root)
-#         AdminHome(root,frame1,frame3)
